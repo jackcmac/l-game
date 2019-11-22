@@ -1,1 +1,17 @@
 <h1>L-Game</h1>
+
+<div class="row" *ngFor="let row of gameBoard; let i = index; trackBy:indexTracker">
+  <div 
+    class="cell" 
+    *ngFor="let cell of gameBoard[i]; let j = index; trackBy:indexTracker"
+    [ngClass]="{'red-placed': cell.state == 1, 'blue-placed': cell.state == 2, 'neutral-placed': cell.state == 3}">
+    <div 
+      class="cell-container"
+      >
+      {{i}} {{j}}
+    </div>
+    
+  </div>
+</div>
+
+<button (click)="printGameBoard()">Print GameBoard</button>

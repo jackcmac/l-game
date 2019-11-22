@@ -1,0 +1,21 @@
+.row {
+    display: flex;
+}
+
+.cell {
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+}
+
+.red-placed {
+    background-color: red;
+}
+
+.blue-placed {
+    background-color: blue;
+}
+
+.neutral-placed {
+    background-color: black;
+}
