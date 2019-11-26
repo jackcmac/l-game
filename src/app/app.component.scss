@@ -8,12 +8,34 @@
     height: 100px;
 }
 
+.cell-container {
+    width: 100%;
+    height: 100%;
+    padding: 1px 0 0 1px;
+}
+
 .red-placed {
     background-color: red;
+
+    &.is-red-turn.is-moving-L {
+        opacity: 55%;
+    }
+
+    &.unconfirmed {
+        opacity: 100% !important;
+    }
 }
 
 .blue-placed {
     background-color: blue;
+
+    &.is-blue-turn {
+        opacity: 55%;
+    }
+
+    &.unconfirmed {
+        opacity: 100% !important;
+    }
 }
 
 .neutral-placed {

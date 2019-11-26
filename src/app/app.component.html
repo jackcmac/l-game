@@ -1,16 +1,23 @@
 <h1>L-Game</h1>
 
-<div class="row" *ngFor="let row of gameBoard; let i = index; trackBy:indexTracker">
+<div class="row" *ngFor="let row of gameBoard; let i = index">
   <div 
     class="cell" 
-    *ngFor="let cell of gameBoard[i]; let j = index; trackBy:indexTracker"
-    [ngClass]="{'red-placed': cell.state == 1, 'blue-placed': cell.state == 2, 'neutral-placed': cell.state == 3}">
+    *ngFor="let cell of gameBoard[i]; let j = index"
+    >
     <div 
       class="cell-container"
-      >
-      {{i}} {{j}}
+      [ngClass]="{'red-placed': cell.state == 2, 
+                  'blue-placed': cell.state == 1, 
+                  'neutral-placed': cell.state == 3,
+                  'is-blue-turn': playerTurn == 1,
+                  'is-red-turn': playerTurn == 2,
+                  'is-moving-L': !playerHasMovedL,
+                  'unconfirmed': cell.unconfirmed}"
+      (mousedown)="checkClickStart(cell)"
+      (mouseover)="checkForDrag(cell)"
+      (mouseup)="checkPlaceComplete(cell)">
     </div>
-    
   </div>
 </div>
 
