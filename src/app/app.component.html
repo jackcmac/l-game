@@ -10,15 +10,16 @@
       [ngClass]="{'red-placed': cell.state == 2, 
                   'blue-placed': cell.state == 1, 
                   'neutral-placed': cell.state == 3,
+                  'neutral-selected': cell.state == 4,
                   'is-blue-turn': playerTurn == 1,
                   'is-red-turn': playerTurn == 2,
                   'is-moving-L': !playerHasMovedL,
                   'unconfirmed': cell.unconfirmed}"
       (mousedown)="checkClickStart(cell)"
-      (mouseover)="checkForDrag(cell)"
+      (mouseenter)="checkForDrag(cell)"
       (mouseup)="checkPlaceComplete(cell)">
     </div>
   </div>
 </div>
 
-<button (click)="printGameBoard()">Print GameBoard</button>
+<button (click)="skipNeutralMove()">Skip Neutral Move</button>

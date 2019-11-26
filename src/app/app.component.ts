@@ -21,6 +21,7 @@ export class AppComponent {
   playerHasMovedL = false;
   canDrag = false;
   currentPlacingL: GameCell[] = [];
+  hasSelectedNeutral = false;
 
   constructor() {
     let gameRow: GameCell[] = [];
@@ -29,7 +30,7 @@ export class AppComponent {
         gameRow.push({
           row: i,
           col: j,
-          state: 0, // 0 = Empty // 1 = Blue // 2 = Red // 3 = Neutral
+          state: 0, // 0 = Empty // 1 = Blue // 2 = Red // 3 = Neutral // 4 = Neutral Selected
           oldState: 0,
           unconfirmed: false
         });
@@ -89,15 +90,38 @@ export class AppComponent {
   public checkClickStart(cell: GameCell) {
     console.log(cell);
     console.log(this.isValidLocation(cell), (cell.state == 0 || cell.state == this.playerTurn), !this.playerHasMovedL)
-    if (this.isValidLocation(cell) && (cell.state == 0 || cell.state == this.playerTurn) && !this.playerHasMovedL) {
-      cell.oldState = cell.state;
-      cell.state = this.playerTurn;
-      cell.unconfirmed = true;
-      this.currentPlacingL.push(cell);
-      this.canDrag = true;
-    } else if (this.isValidLocation(cell) && cell.state == 3 && this.playerHasMovedL) {
-      // Handle neutral move
+    if (this.isValidLocation(cell) && !this.canDrag) {
+      if ((cell.state == 0 || cell.state == this.playerTurn) && !this.playerHasMovedL) {
+        cell.oldState = cell.state;
+        cell.state = this.playerTurn;
+        cell.unconfirmed = true;
+        this.currentPlacingL.push(cell);
+        this.canDrag = true;
+      } else if (cell.state == 3 && this.playerHasMovedL) {
+        // Handle neutral move
+        this.hasSelectedNeutral = true;
+        cell.state = 4;
+      } else if (cell.state == 0 && this.playerHasMovedL && this.hasSelectedNeutral) {
+        this.gameBoard.forEach(row => {
+          row.forEach(element => {
+            if (element.state == 4) {
+              element.state = 0;
+            }
+          });
+        })
+        cell.state = 3;
+        this.hasSelectedNeutral = false;
+        this.playerHasMovedL = false;
+        this.playerTurn = this.playerTurn == 1 ? 2 : 1;
+      }
     }
+    
+  }
+
+  public skipNeutralMove() {
+    this.hasSelectedNeutral = false;
+    this.playerHasMovedL = false;
+    this.playerTurn = this.playerTurn == 1 ? 2 : 1;
   }
 
   public checkForDrag(cell: GameCell) {
@@ -152,8 +176,6 @@ export class AppComponent {
 
     // Clear L
     this.currentPlacingL = [];
-    // Has moved L
-    this.playerHasMovedL = true;
   }
 
   private setNewL() {
@@ -163,11 +185,13 @@ export class AppComponent {
           element.state = 0;
         }
       });
-    })
+    });
 
     this.currentPlacingL.forEach(element => {
       element.unconfirmed = false;
     });
+
+    this.playerHasMovedL = true;
   }
 
   private clearInvalidL() {
@@ -178,7 +202,7 @@ export class AppComponent {
   }
 
   private isValidLocation(cell: GameCell) {
-    if (cell.row > 0 && cell.row < 4 && cell.col > 0 && cell.col < 4) {
+    if (cell.row >= 0 && cell.row < 4 && cell.col >= 0 && cell.col < 4) {
       return true;
     }
     return false;
