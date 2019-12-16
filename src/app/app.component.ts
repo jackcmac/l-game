@@ -22,6 +22,7 @@ export class AppComponent {
   canDrag = false;
   currentPlacingL: GameCell[] = [];
   hasSelectedNeutral = false;
+  lastDragOver: GameCell;
 
   constructor() {
     let gameRow: GameCell[] = [];
@@ -97,6 +98,7 @@ export class AppComponent {
         cell.unconfirmed = true;
         this.currentPlacingL.push(cell);
         this.canDrag = true;
+        this.lastDragOver = cell;
       } else if (cell.state == 3 && this.playerHasMovedL) {
         // Handle neutral move
         this.hasSelectedNeutral = true;
@@ -119,18 +121,22 @@ export class AppComponent {
   }
 
   public skipNeutralMove() {
-    this.hasSelectedNeutral = false;
-    this.playerHasMovedL = false;
-    this.playerTurn = this.playerTurn == 1 ? 2 : 1;
+    if (this.playerHasMovedL) {
+      this.hasSelectedNeutral = false;
+      this.playerHasMovedL = false;
+      this.playerTurn = this.playerTurn == 1 ? 2 : 1;
+    }
   }
 
   public checkForDrag(cell: GameCell) {
     if (this.canDrag) {
-      if (this.isValidLocation(cell) && (cell.state == 0 || cell.state == this.playerTurn) && !this.playerHasMovedL) {
+      if (this.isValidLocation(cell) && (cell.state == 0 || cell.state == this.playerTurn) && !this.playerHasMovedL && this.isAdjacent(this.lastDragOver, cell)) {
         cell.oldState = cell.state;
         cell.state = this.playerTurn;
         cell.unconfirmed = true;
         this.currentPlacingL.push(cell);
+        this.lastDragOver = cell;
+        console.log(this.lastDragOver);
       }
     }
     
@@ -203,6 +209,16 @@ export class AppComponent {
 
   private isValidLocation(cell: GameCell) {
     if (cell.row >= 0 && cell.row < 4 && cell.col >= 0 && cell.col < 4) {
+      return true;
+    }
+    return false;
+  }
+
+  private isAdjacent(source: GameCell, target: GameCell) {
+    if (Math.abs(source.row - target.row) == 1 && source.col == target.col) {
+      return true;
+    }
+    if (Math.abs(source.col - target.col) == 1 && source.row == target.row) {
       return true;
     }
     return false;
